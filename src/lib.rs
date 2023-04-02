@@ -1,3 +1,42 @@
+//! A rust library for interacting with the Slurm REST API.
+//!
+//! For more information, the Slurm REST API is documented at
+//! <https://slurm.schedmd.com/rest_api.html>
+use reqwest::Client;
+use std::sync::Arc;
+
+/// Entrypoint for interacting with the API.
+/// To authenticate with the API, we need a user and a token.
+pub struct Slurm {
+    user: String,
+    token: String,
+    client: Arc<Client>,
+}
+
+impl Slurm {
+    /// Create a new Slurm client struct. It takes any type that can convert
+    /// into a &str.
+    /// Since this lib is useless withouth a client to connect with, this
+    /// will panic if creating a client fails.
+    pub fn new<U, T>(user: U, token: T) -> Self
+    where
+        U: ToString,
+        T: ToString,
+    {
+        let client = Client::builder().build();
+        match client {
+            Ok(c) => {
+                return Slurm {
+                    user: user.to_string(),
+                    token: token.to_string(),
+                    client: Arc::new(c),
+                }
+            }
+            Err(e) => panic!("Unable to create client: {e:?}"),
+        }
+    }
+}
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
