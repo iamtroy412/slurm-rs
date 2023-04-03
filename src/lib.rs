@@ -2,8 +2,8 @@
 //!
 //! For more information, the Slurm REST API is documented at
 //! <https://slurm.schedmd.com/rest_api.html>
-use anyhow::Result;
-use reqwest::{header, Client, Method, Request, Url};
+use anyhow::{bail, Result};
+use reqwest::{header, Client, Method, Request, StatusCode, Url};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{env, sync::Arc};
@@ -109,6 +109,23 @@ impl Slurm {
 
         // Build it!
         Ok(request_builder.build()?)
+    }
+
+    /// Ping test!
+    /// SEE: https://slurm.schedmd.com/rest_api.html#slurmV0038Ping
+    pub async fn ping(&self) -> Result<Pings> {
+        let request = self.request(Method::GET, "ping", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: Pings = response.json().await?;
+        Ok(r)
     }
 }
 
