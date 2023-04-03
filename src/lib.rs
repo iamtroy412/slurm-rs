@@ -4,7 +4,8 @@
 //! <https://slurm.schedmd.com/rest_api.html>
 use anyhow::Result;
 use reqwest::{header, Client, Method, Request, Url};
-use serde::Serialize;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use std::{env, sync::Arc};
 
 const SLURM_USER: &str = "X-SLURM-USER-NAME";
@@ -208,4 +209,51 @@ impl SlurmDB {
         // Build it!
         Ok(request_builder.build()?)
     }
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Ping {
+    #[serde(default)]
+    pub hostname: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub ping: String,
+    #[serde(default)]
+    pub mode: String,
+    #[serde(default)]
+    pub status: i32,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Meta {
+    #[serde(default)]
+    pub plugin: MetaPlugin,
+    #[serde(default)]
+    pub slurm: MetaSlurm,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct MetaPlugin {
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    // it's `type` in the slurm api..might need to adjust this
+    pub atype: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub name: String,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct MetaSlurm {
+    #[serde(default)]
+    pub version: MetaSlurmVersion,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub name: String,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct MetaSlurmVersion {
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub major: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub micro: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub minor: String,
 }
