@@ -60,6 +60,7 @@ impl Slurm {
     fn request<B>(
         &self,
         method: Method,
+        func: &str,
         path: &str,
         body: B,
         query: Option<Vec<(&str, String)>>,
@@ -67,7 +68,9 @@ impl Slurm {
     where
         B: Serialize,
     {
-        let url = self.endpoint.join(SLURM_API_VERSION)?;
+        // https://slurm-endpoint/{slurm,slurmdb}/v0.0.38/{nodes, diag, etc..}
+        let url = self.endpoint.join(func)?;
+        let url = url.join(SLURM_API_VERSION)?;
         let url = url.join(path)?;
 
         // Build auth headers
