@@ -112,7 +112,7 @@ impl Slurm {
     }
 
     /// Ping test!
-    /// SEE: https://slurm.schedmd.com/rest_api.html#slurmV0038Ping
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038Ping>
     pub async fn ping(&self) -> Result<Pings> {
         let request = self.request(Method::GET, "ping", (), None)?;
 
