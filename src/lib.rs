@@ -10,6 +10,7 @@ use std::{env, sync::Arc};
 const SLURM_USER: &str = "X-SLURM-USER-NAME";
 const SLURM_TOKEN: &str = "X-SLURM-USER-TOKEN";
 const SLURM_ENDPOINT: &str = "X-SLURM-ENDPOINT";
+const SLURM_API_VERSION: &str = "v0.0.38";
 
 /// Entrypoint for interacting with the API.
 /// To authenticate with the API, we need a user and a token.
@@ -66,7 +67,8 @@ impl Slurm {
     where
         B: Serialize,
     {
-        let url = self.endpoint.join(path)?;
+        let url = self.endpoint.join(SLURM_API_VERSION)?;
+        let url = url.join(path)?;
 
         // Build auth headers
         let user_header_name =
