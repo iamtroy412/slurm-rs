@@ -2,32 +2,41 @@
 //!
 //! For more information, the Slurm REST API is documented at
 //! <https://slurm.schedmd.com/rest_api.html>
-use reqwest::Client;
+use anyhow::Result;
+use reqwest::{header, Client, Method, Request, Url};
+use serde::Serialize;
 use std::{env, sync::Arc};
+
+const SLURM_USER: &str = "X-SLURM-USER-NAME";
+const SLURM_TOKEN: &str = "X-SLURM-USER-TOKEN";
+const SLURM_ENDPOINT: &str = "X-SLURM-ENDPOINT";
 
 /// Entrypoint for interacting with the API.
 /// To authenticate with the API, we need a user and a token.
 pub struct Slurm {
     user: String,
     token: String,
+    endpoint: Url,
     client: Arc<Client>,
 }
 
 impl Slurm {
     /// Create a new Slurm client struct. It takes any type that can convert
-    /// into a &str.
+    /// into a &str and any type that can convert into a URL for the endpoint.
     /// Since this lib is useless withouth a client to connect with, this
     /// will panic if creating a client fails.
-    pub fn new<U, T>(user: U, token: T) -> Self
+    pub fn new<U, T, L>(user: U, token: T, url: L) -> Self
     where
         U: ToString,
         T: ToString,
+        L: ToString,
     {
         let client = Client::builder().build();
         match client {
             Ok(c) => Slurm {
                 user: user.to_string(),
                 token: token.to_string(),
+                endpoint: Url::parse(&url.to_string()).expect("Unable to parse endpoint into URL!"),
                 client: Arc::new(c),
             },
             Err(e) => panic!("Unable to create client: {e:?}"),
@@ -39,9 +48,61 @@ impl Slurm {
     /// Since this lib is useless withouth a client to connect with, this
     /// will panic if creating a client fails.
     pub fn new_from_env() -> Self {
-        let user = env::var("X-SLURM-USER-NAME").expect("X-SLURM-USER-NAME should be set!");
-        let token = env::var("X-SLURM-USER-TOKEN").expect("X-SLURM-USER-TOKEN should be set!");
+        let endpoint = env::var(SLURM_ENDPOINT).expect("{SLURM_ENDPOINT} should be set!");
+        let user = env::var(SLURM_USER).expect("{SLURM_USER} should be set!");
+        let token = env::var(SLURM_TOKEN).expect("{SLURM_TOKEN} should be set!");
 
-        Slurm::new(user, token)
+        Slurm::new(user, token, endpoint)
+    }
+
+    // This will be our internal request builder.
+    fn request<B>(
+        &self,
+        method: Method,
+        path: &str,
+        body: B,
+        query: Option<Vec<(&str, String)>>,
+    ) -> Result<Request>
+    where
+        B: Serialize,
+    {
+        let url = self.endpoint.join(path)?;
+
+        // Build auth headers
+        let user_header_name =
+            header::HeaderName::from_bytes(SLURM_USER.to_lowercase().as_bytes())?;
+        let user_header_val = header::HeaderValue::from_str(&self.user)?;
+        let token_header_name =
+            header::HeaderName::from_bytes(SLURM_TOKEN.to_lowercase().as_bytes())?;
+        let token_header_val = header::HeaderValue::from_str(&self.token)?;
+
+        // Set default headers
+        let mut headers = header::HeaderMap::new();
+        headers.append(user_header_name, user_header_val);
+        headers.append(token_header_name, token_header_val);
+        headers.append(
+            header::CONTENT_TYPE,
+            header::HeaderValue::from_static("application/json"),
+        );
+
+        // Start building up our request
+        let mut request_builder = self.client.request(method.clone(), url).headers(headers);
+
+        // if we have query variable, add it to our Url
+        match query {
+            None => (),
+            Some(q) => {
+                request_builder = request_builder.query(&q);
+            }
+        }
+
+        // Add the body if our request method is something other than
+        // GET or DELETE
+        if method != Method::GET && method != Method::DELETE {
+            request_builder = request_builder.json(&body);
+        }
+
+        // Build it!
+        Ok(request_builder.build()?)
     }
 }
