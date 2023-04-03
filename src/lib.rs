@@ -212,6 +212,16 @@ impl SlurmDB {
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Pings {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub pings: Vec<Ping>,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct Ping {
     #[serde(default)]
     pub hostname: String,
@@ -223,7 +233,7 @@ pub struct Ping {
     pub status: i32,
 }
 
-#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct Meta {
     #[serde(default)]
     pub plugin: MetaPlugin,
@@ -256,4 +266,12 @@ pub struct MetaSlurmVersion {
     pub micro: String,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub minor: String,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Error {
+    #[serde(default)]
+    pub error: String,
+    #[serde(default)]
+    pub error_number: i32,
 }
