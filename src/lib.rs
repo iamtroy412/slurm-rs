@@ -281,11 +281,11 @@ pub struct MetaSlurm {
 #[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct MetaSlurmVersion {
     #[serde(default)]
-    pub major: String,
+    pub major: i32,
     #[serde(default)]
-    pub micro: String,
+    pub micro: i32,
     #[serde(default)]
-    pub minor: String,
+    pub minor: i32,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
