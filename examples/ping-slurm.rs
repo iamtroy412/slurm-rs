@@ -5,7 +5,11 @@ use slurm_rs::Slurm;
 async fn main() -> Result<()> {
     let slurm = Slurm::new_from_env();
     println!("ping, slurm!");
-    println!("{:?}", slurm.ping().await?);
+
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&slurm.ping().await?).unwrap()
+    );
 
     Ok(())
 }
