@@ -274,7 +274,7 @@ pub struct MetaPlugin {
 pub struct MetaSlurm {
     #[serde(default)]
     pub version: MetaSlurmVersion,
-    #[serde(default, skip_serializing_if = "String::is_empty")]
+    #[serde(default)]
     pub release: String,
 }
 
