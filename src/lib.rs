@@ -257,7 +257,7 @@ pub struct Ping {
 pub struct Meta {
     #[serde(default)]
     pub plugin: MetaPlugin,
-    #[serde(default)]
+    #[serde(default, rename = "Slurm")]
     pub slurm: MetaSlurm,
 }
 
