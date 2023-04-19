@@ -280,12 +280,12 @@ pub struct MetaSlurm {
 
 #[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct MetaSlurmVersion {
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub major: String,
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub micro: String,
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub minor: String,
+    #[serde(default)]
+    pub major: i32,
+    #[serde(default)]
+    pub micro: i32,
+    #[serde(default)]
+    pub minor: i32,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
