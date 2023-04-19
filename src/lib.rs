@@ -275,17 +275,17 @@ pub struct MetaSlurm {
     #[serde(default)]
     pub version: MetaSlurmVersion,
     #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub name: String,
+    pub release: String,
 }
 
 #[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct MetaSlurmVersion {
     #[serde(default)]
-    pub major: i32,
+    pub major: String,
     #[serde(default)]
-    pub micro: i32,
+    pub micro: String,
     #[serde(default)]
-    pub minor: i32,
+    pub minor: String,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
