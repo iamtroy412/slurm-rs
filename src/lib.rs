@@ -263,9 +263,9 @@ pub struct Meta {
 
 #[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct MetaPlugin {
-    #[serde(default, skip_serializing_if = "String::is_empty")]
+    #[serde(default, skip_serializing_if = "String::is_empty", rename = "type")]
     // it's `type` in the slurm api..might need to adjust this
-    pub atype: String,
+    pub plugin_type: String,
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub name: String,
 }
