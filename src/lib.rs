@@ -128,6 +128,23 @@ impl Slurm {
         let r: Pings = response.json().await?;
         Ok(r)
     }
+
+    /// Get all parition information
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetPartitions>
+    pub async fn get_partitions(&self) -> Result<PartitionsResponse> {
+        let request = self.request(Method::GET, "partitions", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: PartitionsResponse = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
