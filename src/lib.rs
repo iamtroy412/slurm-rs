@@ -295,9 +295,9 @@ pub struct NodesResponse {
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct Node {
     #[serde(default)]
-    pub architecture: String,
+    pub architecture: Option<String>,
     #[serde(default)]
-    pub burstbuffer_network_address: String,
+    pub burstbuffer_network_address: Option<String>,
     #[serde(default)]
     pub boards: Option<i64>,
     #[serde(default)]
@@ -313,35 +313,35 @@ pub struct Node {
     #[serde(default)]
     pub cpus: Option<i64>,
     #[serde(default)]
-    pub features: String,
+    pub features: Option<String>,
     #[serde(default)]
-    pub active_features: String,
+    pub active_features: Option<String>,
     #[serde(default)]
-    pub gres: String,
+    pub gres: Option<String>,
     #[serde(default)]
-    pub gres_drained: String,
+    pub gres_drained: Option<String>,
     #[serde(default)]
-    pub gres_used: String,
+    pub gres_used: Option<String>,
     #[serde(default)]
-    pub mcs_label: String,
+    pub mcs_label: Option<String>,
     #[serde(default)]
-    pub name: String,
+    pub name: Option<String>,
     #[serde(default)]
-    pub next_state_after_reboot: String,
+    pub next_state_after_reboot: Option<String>,
     #[serde(default)]
     pub next_state_after_reboot_flags: Vec<String>,
     #[serde(default)]
-    pub address: String,
+    pub address: Option<String>,
     #[serde(default)]
-    pub hostname: String,
+    pub hostname: Option<String>,
     #[serde(default)]
-    pub state: String,
+    pub state: Option<String>,
     #[serde(default)]
     pub state_flags: Vec<String>,
     #[serde(default)]
-    pub operating_system: String,
+    pub operating_system: Option<String>,
     #[serde(default)]
-    pub owner: String,
+    pub owner: Option<String>,
     #[serde(default)]
     pub partitions: Vec<String>,
     #[serde(default)]
@@ -349,11 +349,11 @@ pub struct Node {
     #[serde(default)]
     pub real_memory: Option<i64>,
     #[serde(default)]
-    pub reason: String,
+    pub reason: Option<String>,
     #[serde(default)]
     pub reason_changed_at: Option<i64>,
     #[serde(default)]
-    pub reason_set_by_user: String,
+    pub reason_set_by_user: Option<String>,
     #[serde(default)]
     pub slurmd_start_time: Option<i64>,
     #[serde(default)]
@@ -365,13 +365,13 @@ pub struct Node {
     #[serde(default)]
     pub weight: Option<i64>,
     #[serde(default)]
-    pub tres: String,
+    pub tres: Option<String>,
     #[serde(default)]
-    pub tres_used: String,
+    pub tres_used: Option<String>,
     #[serde(default)]
     pub tres_weighted: Option<f64>,
     #[serde(default)]
-    pub slurmd_version: String,
+    pub slurmd_version: Option<String>,
     #[serde(default)]
     pub alloc_cpus: Option<i64>,
     #[serde(default)]
