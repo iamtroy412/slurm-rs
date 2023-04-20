@@ -162,6 +162,23 @@ impl Slurm {
         let r: PartitionsResponse = response.json().await?;
         Ok(r)
     }
+
+    /// Get all nodes information
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetNodes>
+    pub async fn get_nodes(&self) -> Result<NodesResponse> {
+        let request = self.request(Method::GET, "nodes", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: NodesResponse = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
