@@ -290,7 +290,7 @@ pub struct Partition {
     pub maximum_cpus_per_node: Option<i64>,
     #[serde(default)]
     pub maximum_memory_per_node: Option<i64>,
-    #[serde(default)]
+    // #[serde(default)]
     pub maximum_nodes_per_job: Option<i64>,
     #[serde(default)]
     pub max_time_limit: Option<i64>,
@@ -304,7 +304,7 @@ pub struct Partition {
     pub over_time_limit: Option<i64>,
     #[serde(default)]
     pub priority_job_factor: Option<i64>,
-    #[serde(default)]
+    // #[serde(default)]
     pub priority_tier: Option<i64>,
     #[serde(default)]
     pub qos: String,
