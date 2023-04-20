@@ -196,6 +196,23 @@ impl Slurm {
         let r: NodesResponse = response.json().await?;
         Ok(r)
     }
+
+    /// Get diagnostics information
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038Diag>
+    pub async fn get_diag(&self) -> Result<Diag> {
+        let request = self.request(Method::GET, "diag", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: Diag = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
@@ -297,6 +314,134 @@ impl SlurmDB {
         // Build it!
         Ok(request_builder.build()?)
     }
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Diag {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub statistics: DiagStatistics,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct DiagStatistics {
+    #[serde(default)]
+    pub parts_packed: Option<i64>,
+    #[serde(default)]
+    pub req_time: Option<i64>,
+    #[serde(default)]
+    pub req_time_start: Option<i64>,
+    #[serde(default)]
+    pub server_thread_count: Option<i64>,
+    #[serde(default)]
+    pub agent_queue_size: Option<i64>,
+    #[serde(default)]
+    pub agent_count: Option<i64>,
+    #[serde(default)]
+    pub agent_thread_count: Option<i64>,
+    #[serde(default)]
+    pub dbd_agent_queue_size: Option<i64>,
+    #[serde(default)]
+    pub gettimeofday_latency: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_max: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_last: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_total: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_mean: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_mean_depth: Option<i64>,
+    #[serde(default)]
+    pub schedule_cycle_per_minute: Option<i64>,
+    #[serde(default)]
+    pub schedule_queue_length: Option<i64>,
+    #[serde(default)]
+    pub jobs_submitted: Option<i64>,
+    #[serde(default)]
+    pub jobs_started: Option<i64>,
+    #[serde(default)]
+    pub jobs_completed: Option<i64>,
+    #[serde(default)]
+    pub jobs_canceled: Option<i64>,
+    #[serde(default)]
+    pub jobs_failed: Option<i64>,
+    #[serde(default)]
+    pub jobs_pending: Option<i64>,
+    #[serde(default)]
+    pub jobs_running: Option<i64>,
+    #[serde(default)]
+    pub job_states_ts: Option<i64>,
+    #[serde(default)]
+    pub bf_backfilled_jobs: Option<i64>,
+    #[serde(default)]
+    pub bf_last_backfilled_jobs: Option<i64>,
+    #[serde(default)]
+    pub bf_backfilled_het_jobs: Option<i64>,
+    #[serde(default)]
+    pub bf_cycle_counter: Option<i64>,
+    #[serde(default)]
+    pub bf_cycle_mean: Option<i64>,
+    #[serde(default)]
+    pub bf_cycle_max: Option<i64>,
+    #[serde(default)]
+    pub bf_last_depth: Option<i64>,
+    #[serde(default)]
+    pub bf_last_depth_try: Option<i64>,
+    #[serde(default)]
+    pub bf_depth_mean: Option<i64>,
+    #[serde(default)]
+    pub bf_depth_mean_try: Option<i64>,
+    #[serde(default)]
+    pub bf_cycle_last: Option<i64>,
+    #[serde(default)]
+    pub bf_queue_len: Option<i64>,
+    #[serde(default)]
+    pub bf_queue_len_mean: Option<i64>,
+    #[serde(default)]
+    pub bf_table_size: Option<i64>,
+    #[serde(default)]
+    pub bf_table_size_mean: Option<i64>,
+    #[serde(default)]
+    pub bf_when_last_cycle: Option<i64>,
+    #[serde(default)]
+    pub bf_active: Option<bool>,
+    #[serde(default)]
+    pub rpcs_by_message_type: Option<Vec<DiagRpcm>>,
+    #[serde(default)]
+    pub rpcs_by_user: Option<Vec<DiagRpcu>>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct DiagRpcm {
+    #[serde(default)]
+    pub message_type: Option<String>,
+    #[serde(default)]
+    pub type_id: Option<i64>,
+    #[serde(default)]
+    pub count: Option<i64>,
+    #[serde(default)]
+    pub average_time: Option<i64>,
+    #[serde(default)]
+    pub total_time: Option<i64>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct DiagRpcu {
+    #[serde(default)]
+    pub user: Option<String>,
+    #[serde(default)]
+    pub user_id: Option<i64>,
+    #[serde(default)]
+    pub count: Option<i64>,
+    #[serde(default)]
+    pub average_time: Option<i64>,
+    #[serde(default)]
+    pub total_time: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
