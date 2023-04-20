@@ -277,7 +277,7 @@ pub struct Partition {
     #[serde(default)]
     pub billing_weights: String,
     #[serde(default)]
-    pub default_memory_per_cpu: i64,
+    pub default_memory_per_cpu: Option<i64>,
     #[serde(default)]
     pub default_time_limit: i64,
     #[serde(default)]
