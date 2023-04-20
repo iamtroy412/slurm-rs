@@ -287,33 +287,33 @@ pub struct Partition {
     #[serde(default)]
     pub preemption_grace_time: Option<i64>,
     #[serde(default)]
-    pub maximum_cpus_per_node: u64,
+    pub maximum_cpus_per_node: Option<i64>,
     #[serde(default)]
     pub maximum_memory_per_node: Option<i64>,
     #[serde(default)]
-    pub maximum_nodes_per_job: u64,
+    pub maximum_nodes_per_job: Option<i64>,
     #[serde(default)]
     pub max_time_limit: Option<i64>,
     #[serde(default)]
-    pub min_nodes_per_job: u64,
+    pub min_nodes_per_job: Option<i64>,
     #[serde(default)]
     pub name: String,
     #[serde(default)]
     pub nodes: String,
     #[serde(default)]
-    pub over_time_limit: u64,
+    pub over_time_limit: Option<i64>,
     #[serde(default)]
-    pub priority_job_factor: u64,
+    pub priority_job_factor: Option<i64>,
     #[serde(default)]
-    pub priority_tier: u64,
+    pub priority_tier: Option<i64>,
     #[serde(default)]
     pub qos: String,
     #[serde(default)]
     pub state: String,
     #[serde(default)]
-    pub total_cpus: u64,
+    pub total_cpus: Option<i64>,
     #[serde(default)]
-    pub total_nodes: u64,
+    pub total_nodes: Option<i64>,
     #[serde(default)]
     pub tres: String,
     #[serde(default)]
