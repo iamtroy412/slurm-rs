@@ -232,6 +232,80 @@ impl SlurmDB {
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct PartitionsResponse {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub partitions: Vec<Partition>,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Partition {
+    #[serde(default)]
+    pub flags: Vec<String>,
+    #[serde(default)]
+    pub preemption_mode: Vec<String>,
+    #[serde(default)]
+    pub allowed_allocation_nodes: String,
+    #[serde(default)]
+    pub allowed_accounts: String,
+    #[serde(default)]
+    pub allowed_groups: String,
+    #[serde(default)]
+    pub allowed_qos: String,
+    #[serde(default)]
+    pub alternative: String,
+    #[serde(default)]
+    pub billing_weights: String,
+    #[serde(default)]
+    pub default_memory_per_cpu: i64,
+    #[serde(default)]
+    pub default_time_limit: i64,
+    #[serde(default)]
+    pub denied_accounts: String,
+    #[serde(default)]
+    pub denied_qos: String,
+    #[serde(default)]
+    pub preemption_grace_time: i64,
+    #[serde(default)]
+    pub maximum_cpus_per_node: u64,
+    #[serde(default)]
+    pub maximum_memory_per_node: i64,
+    #[serde(default)]
+    pub maximum_nodes_per_job: u64,
+    #[serde(default)]
+    pub max_time_limit: i64,
+    #[serde(default)]
+    pub min_nodes_per_job: u64,
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub nodes: String,
+    #[serde(default)]
+    pub over_time_limit: u64,
+    #[serde(default)]
+    pub priority_job_factor: u64,
+    #[serde(default)]
+    pub priority_tier: u64,
+    #[serde(default)]
+    pub qos: String,
+    #[serde(default)]
+    pub state: String,
+    #[serde(default)]
+    pub total_cpus: u64,
+    #[serde(default)]
+    pub total_nodes: u64,
+    #[serde(default)]
+    pub tres: String,
+    #[serde(default)]
+    pub maximum_memory_per_cpu: i64,
+    #[serde(default)]
+    pub default_memory_per_node: i64,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct Pings {
     #[serde(default)]
     pub meta: Meta,
