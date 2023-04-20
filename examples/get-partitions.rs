@@ -17,5 +17,11 @@ async fn main() -> Result<()> {
         serde_json::to_string_pretty(&slurm.get_partition("gpu").await?).unwrap()
     );
 
+    println!("This should fail");
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&slurm.get_partition("blah").await?).unwrap()
+    );
+
     Ok(())
 }
