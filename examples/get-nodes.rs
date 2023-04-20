@@ -11,5 +11,11 @@ async fn main() -> Result<()> {
         serde_json::to_string_pretty(&slurm.get_nodes().await?).unwrap()
     );
 
+    println!("get a specific nodes info");
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&slurm.get_node("teach-gpu-n0").await?).unwrap()
+    );
+
     Ok(())
 }
