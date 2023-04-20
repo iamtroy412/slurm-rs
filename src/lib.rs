@@ -279,21 +279,21 @@ pub struct Partition {
     #[serde(default)]
     pub default_memory_per_cpu: Option<i64>,
     #[serde(default)]
-    pub default_time_limit: i64,
+    pub default_time_limit: Option<i64>,
     #[serde(default)]
     pub denied_accounts: String,
     #[serde(default)]
     pub denied_qos: String,
     #[serde(default)]
-    pub preemption_grace_time: i64,
+    pub preemption_grace_time: Option<i64>,
     #[serde(default)]
     pub maximum_cpus_per_node: u64,
     #[serde(default)]
-    pub maximum_memory_per_node: i64,
+    pub maximum_memory_per_node: Option<i64>,
     #[serde(default)]
     pub maximum_nodes_per_job: u64,
     #[serde(default)]
-    pub max_time_limit: i64,
+    pub max_time_limit: Option<i64>,
     #[serde(default)]
     pub min_nodes_per_job: u64,
     #[serde(default)]
@@ -317,9 +317,9 @@ pub struct Partition {
     #[serde(default)]
     pub tres: String,
     #[serde(default)]
-    pub maximum_memory_per_cpu: i64,
+    pub maximum_memory_per_cpu: Option<i64>,
     #[serde(default)]
-    pub default_memory_per_node: i64,
+    pub default_memory_per_node: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
