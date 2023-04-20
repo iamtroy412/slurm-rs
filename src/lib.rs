@@ -266,7 +266,7 @@ pub struct Partition {
     pub preemption_mode: Vec<String>,
     #[serde(default)]
     pub allowed_allocation_nodes: String,
-    #[serde(default)]
+    // #[serde(default)]
     pub allowed_accounts: String,
     #[serde(default)]
     pub allowed_groups: String,
