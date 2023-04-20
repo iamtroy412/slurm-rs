@@ -266,6 +266,104 @@ impl SlurmDB {
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct NodesResponse {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub nodes: Vec<Node>,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Node {
+    #[serde(default)]
+    pub architecture: String,
+    #[serde(default)]
+    pub burstbuffer_network_address: String,
+    #[serde(default)]
+    pub boards: Option<i64>,
+    #[serde(default)]
+    pub boot_time: Option<i64>,
+    #[serde(default)]
+    pub cores: Option<i64>,
+    #[serde(default)]
+    pub cpu_binding: Option<i64>,
+    #[serde(default)]
+    pub cpu_load: Option<i64>,
+    #[serde(default)]
+    pub free_memory: Option<i64>,
+    #[serde(default)]
+    pub cpus: Option<i64>,
+    #[serde(default)]
+    pub features: String,
+    #[serde(default)]
+    pub active_features: String,
+    #[serde(default)]
+    pub gres: String,
+    #[serde(default)]
+    pub gres_drained: String,
+    #[serde(default)]
+    pub gres_used: String,
+    #[serde(default)]
+    pub mcs_label: String,
+    #[serde(default)]
+    pub name: String,
+    #[serde(default)]
+    pub next_state_after_reboot: String,
+    #[serde(default)]
+    pub next_state_after_reboot_flags: Vec<String>,
+    #[serde(default)]
+    pub address: String,
+    #[serde(default)]
+    pub hostname: String,
+    #[serde(default)]
+    pub state: String,
+    #[serde(default)]
+    pub state_flags: Vec<String>,
+    #[serde(default)]
+    pub operating_system: String,
+    #[serde(default)]
+    pub owner: String,
+    #[serde(default)]
+    pub partitions: Vec<String>,
+    #[serde(default)]
+    pub port: Option<i64>,
+    #[serde(default)]
+    pub real_memory: Option<i64>,
+    #[serde(default)]
+    pub reason: String,
+    #[serde(default)]
+    pub reason_changed_at: Option<i64>,
+    #[serde(default)]
+    pub reason_set_by_user: String,
+    #[serde(default)]
+    pub slurmd_start_time: Option<i64>,
+    #[serde(default)]
+    pub sockets: Option<i64>,
+    #[serde(default)]
+    pub threads: Option<i64>,
+    #[serde(default)]
+    pub temporary_disk: Option<i64>,
+    #[serde(default)]
+    pub weight: Option<i64>,
+    #[serde(default)]
+    pub tres: String,
+    #[serde(default)]
+    pub tres_used: String,
+    #[serde(default)]
+    pub tres_weighted: Option<f64>,
+    #[serde(default)]
+    pub slurmd_version: String,
+    #[serde(default)]
+    pub alloc_cpus: Option<i64>,
+    #[serde(default)]
+    pub idle_cpus: Option<i64>,
+    #[serde(default)]
+    pub alloc_memory: Option<i64>,
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
 pub struct PartitionsResponse {
     #[serde(default)]
     pub meta: Meta,
