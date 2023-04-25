@@ -247,6 +247,40 @@ impl Slurm {
         let r: ReservationsResponse = response.json().await?;
         Ok(r)
     }
+
+    /// Get all jobs
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetJobs>
+    pub async fn get_jobs(&self) -> Result<JobsResponse> {
+        let request = self.request(Method::GET, "jobs", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: JobsResponse = response.json().await?;
+        Ok(r)
+    }
+
+    /// Get a specific job
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetJob>
+    pub async fn get_job(&self, job: &str) -> Result<JobsResponse> {
+        let request = self.request(Method::GET, &format!("job/{job}"), (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: JobsResponse = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
@@ -348,6 +382,267 @@ impl SlurmDB {
         // Build it!
         Ok(request_builder.build()?)
     }
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct JobsResponse {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub jobs: Vec<JobResponseProperties>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct JobResponseProperties {
+    #[serde(default)]
+    pub account: Option<String>,
+    #[serde(default)]
+    pub accrue_time: Option<i64>,
+    #[serde(default)]
+    pub admin_comment: Option<String>,
+    #[serde(default)]
+    pub array_job_id: Option<i64>,
+    #[serde(default)]
+    pub array_task_id: Option<i64>,
+    #[serde(default)]
+    pub array_max_tasks: Option<i64>,
+    #[serde(default)]
+    pub array_task_string: Option<String>,
+    #[serde(default)]
+    pub association_id: Option<i64>,
+    #[serde(default)]
+    pub batch_features: Option<String>,
+    #[serde(default)]
+    pub batch_flag: Option<bool>,
+    #[serde(default)]
+    pub batch_host: Option<String>,
+    #[serde(default)]
+    pub flags: Option<Vec<String>>,
+    #[serde(default)]
+    pub burst_buffer: Option<String>,
+    #[serde(default)]
+    pub burst_buffer_state: Option<String>,
+    #[serde(default)]
+    pub cluster: Option<String>,
+    #[serde(default)]
+    pub cluster_features: Option<String>,
+    #[serde(default)]
+    pub command: Option<String>,
+    #[serde(default)]
+    pub comment: Option<String>,
+    #[serde(default)]
+    pub container: Option<String>,
+    #[serde(default)]
+    pub contiguous: Option<bool>,
+    #[serde(default)]
+    pub core_spec: Option<String>,
+    #[serde(default)]
+    pub thread_spec: Option<String>,
+    #[serde(default)]
+    pub cores_per_socket: Option<String>,
+    #[serde(default)]
+    pub billable_tres: Option<f64>,
+    #[serde(default)]
+    pub cpus_per_task: Option<String>,
+    #[serde(default)]
+    pub cpu_frequency_minimum: Option<String>,
+    #[serde(default)]
+    pub cpu_frequency_maximum: Option<String>,
+    #[serde(default)]
+    pub cpu_frequency_governor: Option<String>,
+    #[serde(default)]
+    pub cpus_per_tres: Option<String>,
+    #[serde(default)]
+    pub deadline: Option<i64>,
+    #[serde(default)]
+    pub delay_boot: Option<i64>,
+    #[serde(default)]
+    pub dependency: Option<String>,
+    #[serde(default)]
+    pub derived_exit_code: Option<i64>,
+    #[serde(default)]
+    pub eligible_time: Option<i64>,
+    #[serde(default)]
+    pub end_time: Option<i64>,
+    #[serde(default)]
+    pub excluded_nodes: Option<String>,
+    #[serde(default)]
+    pub exit_code: Option<i64>,
+    #[serde(default)]
+    pub features: Option<String>,
+    #[serde(default)]
+    pub federation_origin: Option<String>,
+    #[serde(default)]
+    pub federation_siblings_active: Option<String>,
+    #[serde(default)]
+    pub federation_siblings_viable: Option<String>,
+    #[serde(default)]
+    pub gres_detail: Option<Vec<String>>,
+    #[serde(default)]
+    pub group_id: Option<i64>,
+    #[serde(default)]
+    pub job_id: Option<i64>,
+    #[serde(default)]
+    pub job_resources: Option<JobResources>,
+    #[serde(default)]
+    pub job_state: Option<String>,
+    #[serde(default)]
+    pub last_sched_evaluation: Option<i64>,
+    #[serde(default)]
+    pub licenses: Option<String>,
+    #[serde(default)]
+    pub max_cpus: Option<i64>,
+    #[serde(default)]
+    pub max_nodes: Option<i64>,
+    #[serde(default)]
+    pub mcs_label: Option<String>,
+    #[serde(default)]
+    pub memory_per_tres: Option<String>,
+    #[serde(default)]
+    pub name: Option<String>,
+    #[serde(default)]
+    pub nodes: Option<String>,
+    #[serde(default)]
+    pub nice: Option<i64>,
+    #[serde(default)]
+    pub tasks_per_core: Option<i64>,
+    #[serde(default)]
+    pub tasks_per_socket: Option<i64>,
+    #[serde(default)]
+    pub tasks_per_board: Option<i64>,
+    #[serde(default)]
+    pub cpus: Option<i64>,
+    #[serde(default)]
+    pub node_count: Option<i64>,
+    #[serde(default)]
+    pub tasks: Option<i64>,
+    #[serde(default)]
+    pub het_job_id: Option<i64>,
+    #[serde(default)]
+    pub het_job_id_set: Option<String>,
+    #[serde(default)]
+    pub het_job_offset: Option<i64>,
+    #[serde(default)]
+    pub partition: Option<String>,
+    #[serde(default)]
+    pub memory_per_node: Option<i64>,
+    #[serde(default)]
+    pub memory_per_cpu: Option<i64>,
+    #[serde(default)]
+    pub minimum_cpus_per_node: Option<i64>,
+    #[serde(default)]
+    pub minimum_tmp_disk_per_node: Option<i64>,
+    #[serde(default)]
+    pub preempt_time: Option<i64>,
+    #[serde(default)]
+    pub pre_sus_time: Option<i64>,
+    #[serde(default)]
+    pub priority: Option<i64>,
+    #[serde(default)]
+    pub profile: Option<Vec<String>>,
+    #[serde(default)]
+    pub qos: Option<String>,
+    #[serde(default)]
+    pub reboot: Option<bool>,
+    #[serde(default)]
+    pub required_nodes: Option<String>,
+    #[serde(default)]
+    pub requeue: Option<bool>,
+    #[serde(default)]
+    pub resize_time: Option<i64>,
+    #[serde(default)]
+    pub restart_cnt: Option<i64>,
+    #[serde(default)]
+    pub resv_name: Option<String>,
+    #[serde(default)]
+    pub shared: Option<String>,
+    #[serde(default)]
+    pub show_flags: Option<Vec<String>>,
+    #[serde(default)]
+    pub sockets_per_board: Option<i64>,
+    #[serde(default)]
+    pub sockets_per_node: Option<i64>,
+    #[serde(default)]
+    pub start_time: Option<i64>,
+    #[serde(default)]
+    pub state_description: Option<String>,
+    #[serde(default)]
+    pub state_reason: Option<String>,
+    #[serde(default)]
+    pub standard_error: Option<String>,
+    #[serde(default)]
+    pub standard_input: Option<String>,
+    #[serde(default)]
+    pub standard_output: Option<String>,
+    #[serde(default)]
+    pub submit_time: Option<i64>,
+    #[serde(default)]
+    pub suspend_time: Option<i64>,
+    #[serde(default)]
+    pub system_comment: Option<String>,
+    #[serde(default)]
+    pub time_limit: Option<i64>,
+    #[serde(default)]
+    pub time_minimum: Option<i64>,
+    #[serde(default)]
+    pub threads_per_core: Option<i64>,
+    #[serde(default)]
+    pub tres_bind: Option<String>,
+    #[serde(default)]
+    pub tres_freq: Option<String>,
+    #[serde(default)]
+    pub tres_per_job: Option<String>,
+    #[serde(default)]
+    pub tres_per_node: Option<String>,
+    #[serde(default)]
+    pub tres_per_socket: Option<String>,
+    #[serde(default)]
+    pub tres_per_task: Option<String>,
+    #[serde(default)]
+    pub tres_req_str: Option<String>,
+    #[serde(default)]
+    pub tres_alloc_str: Option<String>,
+    #[serde(default)]
+    pub user_id: Option<i64>,
+    #[serde(default)]
+    pub user_name: Option<String>,
+    #[serde(default)]
+    pub wckey: Option<String>,
+    #[serde(default)]
+    pub current_working_directory: Option<String>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct JobResources {
+    #[serde(default)]
+    pub nodes: Option<String>,
+    #[serde(default)]
+    pub allocated_cpus: Option<i64>,
+    #[serde(default)]
+    pub allocated_hosts: Option<i64>,
+    #[serde(default)]
+    pub allocated_nodes: Option<NodeAllocation>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct NodeAllocation {
+    #[serde(default)]
+    pub memory: Option<i64>,
+    #[serde(default)]
+    pub cpus: Option<i64>,
+    #[serde(default)]
+    pub sockets: Option<NodeAllocationSockets>,
+    #[serde(default)]
+    pub nodename: Option<String>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct NodeAllocationSockets {
+    #[serde(default)]
+    // wtf? https://slurm.schedmd.com/rest_api.html#v0_0_38_node_allocation_sockets
+    pub cores: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
