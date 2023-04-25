@@ -281,6 +281,23 @@ impl Slurm {
         let r: JobsResponse = response.json().await?;
         Ok(r)
     }
+
+    /// Get licenses
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038SlurmctldGetLicenses>
+    pub async fn get_licenses(&self) -> Result<Licenses> {
+        let request = self.request(Method::GET, "licenses", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: Licenses = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
@@ -382,6 +399,30 @@ impl SlurmDB {
         // Build it!
         Ok(request_builder.build()?)
     }
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Licenses {
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub jobs: Vec<License>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct License {
+    #[serde(default, rename = "LicenseName")]
+    pub license_name: Option<String>,
+    #[serde(default, rename = "Total")]
+    pub total: Option<i64>,
+    #[serde(default, rename = "Used")]
+    pub used: Option<i64>,
+    #[serde(default, rename = "Free")]
+    pub free: Option<i64>,
+    #[serde(default, rename = "Reserved")]
+    pub reserved: Option<i64>,
+    #[serde(default, rename = "Remote")]
+    pub remote: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
