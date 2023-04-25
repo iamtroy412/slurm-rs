@@ -406,7 +406,7 @@ pub struct Licenses {
     #[serde(default)]
     pub errors: Vec<Error>,
     #[serde(default)]
-    pub jobs: Vec<License>,
+    pub licenses: Vec<License>,
 }
 
 #[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
