@@ -213,6 +213,40 @@ impl Slurm {
         let r: Diag = response.json().await?;
         Ok(r)
     }
+
+    /// Get all reservations
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetReservations>
+    pub async fn get_reservations(&self) -> Result<ReservationsResponse> {
+        let request = self.request(Method::GET, "reservations", (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: ReservationsResponse = response.json().await?;
+        Ok(r)
+    }
+
+    /// Get a specific reservation
+    /// SEE: <https://slurm.schedmd.com/rest_api.html#slurmV0038GetReservation>
+    pub async fn get_reservation(&self, reservation: &str) -> Result<ReservationsResponse> {
+        let request = self.request(Method::GET, &format!("reservation/{reservation}"), (), None)?;
+
+        let response = self.client.execute(request).await?;
+        match response.status() {
+            StatusCode::OK => (),
+            status => {
+                bail!("status code: {}, body: {}", status, response.text().await?);
+            }
+        };
+
+        let r: ReservationsResponse = response.json().await?;
+        Ok(r)
+    }
 }
 
 /// Entrypoint for interacting with the API.
@@ -314,6 +348,64 @@ impl SlurmDB {
         // Build it!
         Ok(request_builder.build()?)
     }
+}
+
+#[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct ReservationsResponse {
+    #[serde(default)]
+    pub meta: Meta,
+    #[serde(default)]
+    pub errors: Vec<Error>,
+    #[serde(default)]
+    pub reservation: Vec<Reservation>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct Reservation {
+    #[serde(default)]
+    pub accounts: Option<String>,
+    #[serde(default)]
+    pub burst_buffer: Option<String>,
+    #[serde(default)]
+    pub core_count: Option<i64>,
+    #[serde(default)]
+    pub core_spec_cnt: Option<i64>,
+    #[serde(default)]
+    pub end_time: Option<i64>,
+    #[serde(default)]
+    pub features: Option<String>,
+    #[serde(default)]
+    pub flags: Vec<String>,
+    #[serde(default)]
+    pub groups: Option<String>,
+    #[serde(default)]
+    pub licenses: Option<String>,
+    #[serde(default)]
+    pub max_start_delay: Option<i64>,
+    #[serde(default)]
+    pub name: Option<String>,
+    #[serde(default)]
+    pub node_count: Option<i64>,
+    #[serde(default)]
+    pub node_list: Option<String>,
+    #[serde(default)]
+    pub partition: Option<String>,
+    #[serde(default)]
+    pub purge_completed: ReservationPurgeCompleted,
+    #[serde(default)]
+    pub start_time: Option<i64>,
+    #[serde(default)]
+    pub watts: Option<i64>,
+    #[serde(default)]
+    pub tres: Option<String>,
+    #[serde(default)]
+    pub users: Option<String>,
+}
+
+#[derive(Debug, Default, Clone, Deserialize, JsonSchema, Serialize)]
+pub struct ReservationPurgeCompleted {
+    #[serde(default)]
+    time: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize, JsonSchema, Serialize)]
